@@ -1,0 +1,13 @@
+{
+  "name": "nodejs-intro",
+  "version": "1.0.0",
+  "description": "Introduction to Node.js runtime and architecture",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": ["nodejs", "introduction", "modules", "runtime"],
+  "author": "Backend Learning Path",
+  "license": "MIT"
+}
