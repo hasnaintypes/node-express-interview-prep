@@ -1,0 +1,30 @@
+{
+  "name": "nodejs-event-loop",
+  "version": "1.0.0",
+  "description": "Understanding Node.js Event Loop and Asynchronous Programming",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "callback-hell": "node examples/basics/callbackHell.js",
+    "event-emitter": "node examples/basics/eventEmitterAdvanced.js",
+    "event-loop-viz": "node examples/advanced/eventLoopVisualization.js",
+    "worker-threads": "node examples/advanced/workerThreads.js",
+    "streams": "node examples/streams/streamsDemo.js",
+    "performance": "node --expose-gc examples/performance/performanceMonitoring.js",
+    "file-processor": "node examples/real-world/asyncFileProcessor.js",
+    "examples": "echo Available examples: callback-hell, event-emitter, event-loop-viz, worker-threads, streams, performance, file-processor"
+  },
+  "keywords": [
+    "nodejs",
+    "event-loop",
+    "async",
+    "promises",
+    "callbacks",
+    "events",
+    "streams",
+    "workers",
+    "performance"
+  ],
+  "author": "Backend Learning Path",
+  "license": "MIT"
+}
