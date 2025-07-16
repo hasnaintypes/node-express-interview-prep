@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Routing Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>🚀 Express.js Routing Demo</h1>
+        <p>Interactive examples of Express.js routing patterns</p>
+    </header>
+
+    <main>
+        <section class="demo-section">
+            <h2>📋 Available Routes</h2>
+            <div class="routes-grid">
+                <div class="route-card">
+                    <h3>Basic Routes</h3>
+                    <ul>
+                        <li><a href="/about">GET /about</a></li>
+                        <li><a href="/contact">GET /contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="route-card">
+                    <h3>Route Parameters</h3>
+                    <ul>
+                        <li><a href="/users/123">GET /users/:id</a></li>
+                        <li><a href="/users/123/posts/456">GET /users/:id/posts/:postId</a></li>
+                    </ul>
+                </div>
+                
+                <div class="route-card">
+                    <h3>Query Parameters</h3>
+                    <ul>
+                        <li><a href="/search?q=nodejs&limit=5">GET /search</a></li>
+                        <li><a href="/posts/2023/12">GET /posts/:year/:month</a></li>
+                    </ul>
+                </div>
+                
+                <div class="route-card">
+                    <h3>API Routes</h3>
+                    <ul>
+                        <li><a href="/api/info">GET /api/info</a></li>
+                        <li><a href="/api/users">GET /api/users</a></li>
+                        <li><a href="/api/v1/status">GET /api/v1/status</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="demo-section">
+            <h2>🧪 Interactive Testing</h2>
+            <div class="test-form">
+                <h3>Test POST Request</h3>
+                <form id="productForm">
+                    <input type="text" id="productName" placeholder="Product Name" required>
+                    <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
+                    <button type="submit">Create Product</button>
+                </form>
+                <div id="result"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

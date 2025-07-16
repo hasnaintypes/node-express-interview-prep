@@ -1,0 +1,19 @@
+{
+  "name": "express-intro-routing",
+  "version": "1.0.0",
+  "description": "Express.js introduction and routing examples",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["express", "routing", "nodejs", "web-framework"],
+  "author": "Backend Learning Path",
+  "license": "MIT"
+}
