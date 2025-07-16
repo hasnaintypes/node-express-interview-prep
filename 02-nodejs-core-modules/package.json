@@ -1,0 +1,16 @@
+{
+  "name": "nodejs-core-modules",
+  "version": "1.0.0",
+  "description": "Working with Node.js built-in core modules - examples, best practices, and common mistakes guide",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "examples": "node core-modules-examples.js",
+    "mistakes": "node common-mistakes-guide.js",
+    "best-practices": "node common-mistakes-guide.js",
+    "system-info": "node -e \"const SystemInfo = require('./utils/systemInfo'); console.log(JSON.stringify(SystemInfo.getFullReport(), null, 2));\""
+  },
+  "keywords": ["nodejs", "core-modules", "path", "os", "url", "crypto", "examples", "best-practices", "common-mistakes"],
+  "author": "Backend Learning Path",
+  "license": "MIT"
+}
