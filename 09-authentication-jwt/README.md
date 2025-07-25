@@ -121,43 +121,39 @@ JWT (JSON Web Token) is a compact, URL-safe means of representing claims between
 
 ### JWT Structure:
 
-\`\`\`
+```
 Header.Payload.Signature
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-\`\`\`
+```
 
 ### JWT Components:
 
 #### 1. Header:
 
-\`\`\`json
+```json
 {
-"alg": "HS256",
-"typ": "JWT"
+  "alg": "HS256",
+  "typ": "JWT"
 }
-\`\`\`
+```
 
 #### 2. Payload:
 
-\`\`\`json
+```json
 {
-"sub": "1234567890",
-"name": "John Doe",
-"iat": 1516239022,
-"exp": 1516325422
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022,
+  "exp": 1516325422
 }
-\`\`\`
+```
 
 #### 3. Signature:
 
-\`\`\`javascript
-HMACSHA256(
-base64UrlEncode(header) + "." +
-base64UrlEncode(payload),
-secret
-)
-\`\`\`
+```javascript
+HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret);
+```
 
 ## 🔒 JWT vs Sessions
 
@@ -180,8 +176,8 @@ secret
 
 ### Password Hashing with bcrypt:
 
-\`\`\`javascript
-const bcrypt = require('bcrypt');
+```javascript
+const bcrypt = require("bcrypt");
 
 // Hash password
 const saltRounds = 12;
@@ -189,7 +185,7 @@ const hashedPassword = await bcrypt.hash(password, saltRounds);
 
 // Verify password
 const isValid = await bcrypt.compare(password, hashedPassword);
-\`\`\`
+```
 
 ### Password Requirements:
 
@@ -203,35 +199,35 @@ const isValid = await bcrypt.compare(password, hashedPassword);
 
 ### Token Generation:
 
-\`\`\`javascript
-const jwt = require('jsonwebtoken');
+```javascript
+const jwt = require("jsonwebtoken");
 
 const generateToken = (payload) => {
-return jwt.sign(payload, process.env.JWT_SECRET, {
-expiresIn: '24h',
-issuer: 'your-app-name',
-audience: 'your-app-users'
-});
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+    issuer: "your-app-name",
+    audience: "your-app-users",
+  });
 };
-\`\`\`
+```
 
 ### Token Verification:
 
-\`\`\`javascript
+```javascript
 const verifyToken = (token) => {
-try {
-return jwt.verify(token, process.env.JWT_SECRET);
-} catch (error) {
-throw new Error('Invalid token');
-}
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    throw new Error("Invalid token");
+  }
 };
-\`\`\`
+```
 
 ## 🚪 Authentication Flow
 
 ### Registration Flow:
 
-\`\`\`
+```
 
 1. User submits registration form
 2. Validate input data
@@ -240,126 +236,125 @@ throw new Error('Invalid token');
 5. Save user to database
 6. Generate JWT token
 7. Return token to client
-   \`\`\`
+```
 
 ### Login Flow:
 
-\`\`\`
+```
 
 1. User submits login credentials
 2. Find user by email/username
 3. Compare password with stored hash
 4. Generate JWT token if valid
 5. Return token to client
-   \`\`\`
+```
 
 ### Protected Route Access:
 
-\`\`\`
+```
 
 1. Client sends request with JWT token
 2. Server validates token
 3. Extract user information from token
 4. Allow or deny access based on token validity
-   \`\`\`
+```
 
 ## 🔐 Authentication Middleware
 
 ### Basic Auth Middleware:
 
-\`\`\`javascript
+```javascript
 const authenticateToken = (req, res, next) => {
-const authHeader = req.headers['authorization'];
-const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-if (!token) {
-return res.status(401).json({ error: 'Access token required' });
-}
+  if (!token) {
+    return res.status(401).json({ error: "Access token required" });
+  }
 
-jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-if (err) {
-return res.status(403).json({ error: 'Invalid token' });
-}
-req.user = user;
-next();
-});
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: "Invalid token" });
+    }
+    req.user = user;
+    next();
+  });
 };
-\`\`\`
+```
 
 ### Role-Based Authorization:
 
-\`\`\`javascript
+```javascript
 const requireRole = (role) => {
-return (req, res, next) => {
-if (req.user.role !== role) {
-return res.status(403).json({
-error: 'Insufficient permissions'
-});
-}
-next();
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res.status(403).json({
+        error: "Insufficient permissions",
+      });
+    }
+    next();
+  };
 };
-};
-\`\`\`
+```
 
 ## 🔄 Token Refresh
 
 ### Refresh Token Strategy:
 
-\`\`\`javascript
+```javascript
 // Generate tokens
-const accessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: '15m' });
-const refreshToken = jwt.sign(payload, REFRESH_SECRET, { expiresIn: '7d' });
+const accessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
+const refreshToken = jwt.sign(payload, REFRESH_SECRET, { expiresIn: "7d" });
 
 // Refresh endpoint
-app.post('/auth/refresh', (req, res) => {
-const { refreshToken } = req.body;
+app.post("/auth/refresh", (req, res) => {
+  const { refreshToken } = req.body;
 
-if (!refreshToken) {
-return res.status(401).json({ error: 'Refresh token required' });
-}
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Refresh token required" });
+  }
 
-jwt.verify(refreshToken, REFRESH_SECRET, (err, user) => {
-if (err) {
-return res.status(403).json({ error: 'Invalid refresh token' });
-}
+  jwt.verify(refreshToken, REFRESH_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: "Invalid refresh token" });
+    }
 
     const newAccessToken = jwt.sign(
       { id: user.id, email: user.email },
       ACCESS_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: "15m" }
     );
 
     res.json({ accessToken: newAccessToken });
-
+  });
 });
-});
-\`\`\`
+```
 
 ## 🛡️ Security Best Practices
 
 ### 1. Secure JWT Secrets:
 
-\`\`\`javascript
+```javascript
 // Use strong, random secrets
-const JWT_SECRET = crypto.randomBytes(64).toString('hex');
+const JWT_SECRET = crypto.randomBytes(64).toString("hex");
 
 // Store in environment variables
 const secret = process.env.JWT_SECRET;
-\`\`\`
+```
 
 ### 2. Token Expiration:
 
-\`\`\`javascript
+```javascript
 // Short-lived access tokens
-const accessToken = jwt.sign(payload, secret, { expiresIn: '15m' });
+const accessToken = jwt.sign(payload, secret, { expiresIn: "15m" });
 
 // Longer-lived refresh tokens
-const refreshToken = jwt.sign(payload, refreshSecret, { expiresIn: '7d' });
-\`\`\`
+const refreshToken = jwt.sign(payload, refreshSecret, { expiresIn: "7d" });
+```
 
 ### 3. HTTPS Only:
 
-\`\`\`javascript
+```javascript
 // Set secure cookies in production
 res.cookie('refreshToken', refreshToken, {
 httpOnly: true,
@@ -367,23 +362,25 @@ secure: process.env.NODE_ENV === 'production',
 sameSite: 'strict',
 maxAge: 7 _ 24 _ 60 _ 60 _ 1000 // 7 days
 });
-\`\`\`
+```
 
 ### 4. Input Validation:
 
-\`\`\`javascript
-const { body, validationResult } = require('express-validator');
+```javascript
+const { body, validationResult } = require("express-validator");
 
 const validateRegistration = [
-body('email').isEmail().normalizeEmail(),
-body('password').isLength({ min: 8 }).matches(/^(?=._[a-z])(?=._[A-Z])(?=.\*\d)/),
-body('name').isLength({ min: 2, max: 50 }).trim().escape()
+  body("email").isEmail().normalizeEmail(),
+  body("password")
+    .isLength({ min: 8 })
+    .matches(/^(?=._[a-z])(?=._[A-Z])(?=.*d)/),
+  body("name").isLength({ min: 2, max: 50 }).trim().escape(),
 ];
-\`\`\`
+```
 
 ### 5. Rate Limiting:
 
-\`\`\`javascript
+```javascript
 const rateLimit = require('express-rate-limit');
 
 const authLimiter = rateLimit({
@@ -393,7 +390,7 @@ message: 'Too many authentication attempts'
 });
 
 app.use('/auth/login', authLimiter);
-\`\`\`
+```
 
 ## 🔍 Token Storage
 
@@ -401,95 +398,93 @@ app.use('/auth/login', authLimiter);
 
 #### 1. localStorage:
 
-\`\`\`javascript
+```javascript
 // Store token
-localStorage.setItem('accessToken', token);
+localStorage.setItem("accessToken", token);
 
 // Retrieve token
-const token = localStorage.getItem('accessToken');
+const token = localStorage.getItem("accessToken");
 
 // Remove token
-localStorage.removeItem('accessToken');
-\`\`\`
+localStorage.removeItem("accessToken");
+```
 
 #### 2. sessionStorage:
 
-\`\`\`javascript
+```javascript
 // More secure, cleared when tab closes
-sessionStorage.setItem('accessToken', token);
-\`\`\`
+sessionStorage.setItem("accessToken", token);
+```
 
 #### 3. HTTP-Only Cookies:
 
-\`\`\`javascript
+```javascript
 // Most secure for refresh tokens
-res.cookie('refreshToken', refreshToken, {
-httpOnly: true,
-secure: true,
-sameSite: 'strict'
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "strict",
 });
-\`\`\`
+```
 
 ## 🧪 Testing Authentication
 
 ### Unit Tests:
 
-\`\`\`javascript
-describe('Authentication', () => {
-describe('POST /auth/register', () => {
-it('should register a new user', async () => {
-const userData = {
-name: 'John Doe',
-email: 'john@example.com',
-password: 'Password123!'
-};
+```javascript
+describe("Authentication", () => {
+  describe("POST /auth/register", () => {
+    it("should register a new user", async () => {
+      const userData = {
+        name: "John Doe",
+        email: "john@example.com",
+        password: "Password123!",
+      };
 
       const response = await request(app)
-        .post('/auth/register')
+        .post("/auth/register")
         .send(userData)
         .expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.data.token).toBeDefined();
     });
+  });
 
-});
-
-describe('POST /auth/login', () => {
-it('should login with valid credentials', async () => {
-const credentials = {
-email: 'john@example.com',
-password: 'Password123!'
-};
+  describe("POST /auth/login", () => {
+    it("should login with valid credentials", async () => {
+      const credentials = {
+        email: "john@example.com",
+        password: "Password123!",
+      };
 
       const response = await request(app)
-        .post('/auth/login')
+        .post("/auth/login")
         .send(credentials)
         .expect(200);
 
       expect(response.body.data.token).toBeDefined();
     });
-
+  });
 });
-});
-\`\`\`
+```
 
 ## 🔒 Advanced Security Features
 
 ### 1. Account Lockout:
 
-\`\`\`javascript
+```javascript
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_TIME = 30 _ 60 _ 1000; // 30 minutes
 
 // Track failed attempts
 user.loginAttempts = (user.loginAttempts || 0) + 1;
 user.lockUntil = Date.now() + LOCKOUT_TIME;
-\`\`\`
+```
 
 ### 2. Password Reset:
 
-\`\`\`javascript
+```javascript
 const crypto = require('crypto');
 
 // Generate reset token
@@ -498,50 +493,50 @@ const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('he
 
 user.passwordResetToken = resetTokenHash;
 user.passwordResetExpires = Date.now() + 10 _ 60 _ 1000; // 10 minutes
-\`\`\`
+```
 
 ### 3. Two-Factor Authentication:
 
-\`\`\`javascript
-const speakeasy = require('speakeasy');
+```javascript
+const speakeasy = require("speakeasy");
 
 // Generate secret
 const secret = speakeasy.generateSecret({
-name: 'Your App',
-length: 32
+  name: "Your App",
+  length: 32,
 });
 
 // Verify token
 const verified = speakeasy.totp.verify({
-secret: user.twoFactorSecret,
-encoding: 'base32',
-token: userToken,
-window: 2
+  secret: user.twoFactorSecret,
+  encoding: "base32",
+  token: userToken,
+  window: 2,
 });
-\`\`\`
+```
 
 ## 📊 Security Monitoring
 
 ### 1. Login Tracking:
 
-\`\`\`javascript
+```javascript
 const loginLog = {
-userId: user.id,
-ip: req.ip,
-userAgent: req.get('User-Agent'),
-timestamp: new Date(),
-success: true
+  userId: user.id,
+  ip: req.ip,
+  userAgent: req.get("User-Agent"),
+  timestamp: new Date(),
+  success: true,
 };
-\`\`\`
+```
 
 ### 2. Suspicious Activity Detection:
 
-\`\`\`javascript
+```javascript
 // Multiple failed logins
 // Login from new location
 // Unusual access patterns
 // Token manipulation attempts
-\`\`\`
+```
 
 ## 💻 Code Examples
 

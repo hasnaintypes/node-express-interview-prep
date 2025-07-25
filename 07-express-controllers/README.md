@@ -12,11 +12,11 @@
 MVC separates application logic into three interconnected components:
 
 ### Model-View-Controller Flow:
-\`\`\`
+```
 Request ──→ Router ──→ Controller ──→ Service ──→ Model ──→ Database
    ↑                      ↓           ↓         ↓
    └── Response ←── View ←── Controller ←── Service ←── Model
-\`\`\`
+```
 
 ### Components:
 - **Model**: Data structure and database operations
@@ -26,7 +26,7 @@ Request ──→ Router ──→ Controller ──→ Service ──→ Model 
 
 ## 📁 Project Structure
 
-\`\`\`
+```
 express-controllers/
 ├── controllers/          # Request handlers
 │   ├── userController.js
@@ -48,14 +48,14 @@ express-controllers/
 ├── utils/               # Utility functions
 ├── validators/          # Input validation
 └── app.js              # Main application
-\`\`\`
+```
 
 ## 🎮 Controllers
 
 Controllers handle HTTP requests and coordinate between services and models.
 
 ### Controller Structure:
-\`\`\`javascript
+```javascript
 class UserController {
   // GET /users
   async getAllUsers(req, res, next) {
@@ -99,7 +99,7 @@ class UserController {
     }
   }
 }
-\`\`\`
+```
 
 ## 🔧 Services
 
@@ -112,7 +112,7 @@ Services contain business logic and interact with models.
 - **Maintainability**: Centralized business rules
 
 ### Service Structure:
-\`\`\`javascript
+```javascript
 class UserService {
   async getAllUsers(filters = {}) {
     const { page = 1, limit = 10, search, active } = filters;
@@ -147,14 +147,14 @@ class UserService {
     };
   }
 }
-\`\`\`
+```
 
 ## 📊 Models
 
 Models represent data structure and handle database operations.
 
 ### Model Structure:
-\`\`\`javascript
+```javascript
 class User {
   constructor(data) {
     this.id = data.id;
@@ -194,14 +194,14 @@ class User {
     // Database deletion logic
   }
 }
-\`\`\`
+```
 
 ## 🛤️ Route Organization
 
 Routes connect HTTP endpoints to controllers.
 
 ### Route Structure:
-\`\`\`javascript
+```javascript
 const express = require('express');
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
@@ -223,14 +223,14 @@ router.put('/:id', validation.updateUser, userController.updateUser);
 router.delete('/:id', validation.deleteUser, userController.deleteUser);
 
 module.exports = router;
-\`\`\`
+```
 
 ## ✅ Validation Layer
 
 Validators handle input validation before reaching controllers.
 
 ### Validation Structure:
-\`\`\`javascript
+```javascript
 const { body, param, query, validationResult } = require('express-validator');
 
 const userValidator = {
@@ -244,7 +244,7 @@ const userValidator = {
       .withMessage('Valid email is required'),
     body('password')
       .isLength({ min: 8 })
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*d)/)
       .withMessage('Password must be at least 8 characters with uppercase, lowercase, and number'),
     handleValidationErrors
   ],
@@ -268,14 +268,14 @@ const handleValidationErrors = (req, res, next) => {
   }
   next();
 };
-\`\`\`
+```
 
 ## 🔄 Error Handling
 
 Centralized error handling across controllers.
 
 ### Error Handling Pattern:
-\`\`\`javascript
+```javascript
 class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
@@ -299,14 +299,14 @@ async createUser(req, res, next) {
     next(error);
   }
 }
-\`\`\`
+```
 
 ## 📈 Response Formatting
 
 Consistent API response structure.
 
 ### Response Format:
-\`\`\`javascript
+```javascript
 // Success Response
 {
   "success": true,
@@ -324,14 +324,14 @@ Consistent API response structure.
     "details": [ ... ] // validation errors
   }
 }
-\`\`\`
+```
 
 ## 🧪 Testing Controllers
 
 Unit testing controller methods.
 
 ### Controller Testing:
-\`\`\`javascript
+```javascript
 const request = require('supertest');
 const app = require('../app');
 
@@ -365,7 +365,7 @@ describe('User Controller', () => {
     });
   });
 });
-\`\`\`
+```
 
 ## 📝 Best Practices
 
@@ -404,10 +404,10 @@ Check out the complete implementation with:
 - [ ] Build a social media API with users, posts, and relationships
 - [ ] Create a booking system with availability and reservations
 - [ ] Implement a content management system with roles and permissions
-\`\`\`
-\`\`\`
+```
+```
 
-\`\`\`
+```
 
 
-\`\`\`
+```

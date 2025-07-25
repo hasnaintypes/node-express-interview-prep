@@ -22,18 +22,18 @@ REST (Representational State Transfer) is an architectural style for designing n
 6. **Code on Demand**: Optional - server can send executable code
 
 ### REST Constraints:
-\`\`\`
+```
 Client ←──HTTP──→ Server
    ↑                ↓
    └── Stateless ──┘
-\`\`\`
+```
 
 ## 🛤️ Resource-Based URLs
 
 Design URLs around resources, not actions.
 
 ### Good URL Design:
-\`\`\`
+```
 GET    /api/users              # Get all users
 GET    /api/users/123          # Get user by ID
 POST   /api/users              # Create new user
@@ -43,20 +43,20 @@ DELETE /api/users/123          # Delete user
 
 GET    /api/users/123/posts    # Get user's posts
 POST   /api/users/123/posts    # Create post for user
-\`\`\`
+```
 
 ### Bad URL Design:
-\`\`\`
+```
 ❌ GET  /api/getUsers
 ❌ POST /api/createUser
 ❌ GET  /api/user/delete/123
 ❌ POST /api/users/123/getPosts
-\`\`\`
+```
 
 ## 🔢 HTTP Methods & Status Codes
 
 ### HTTP Methods:
-\`\`\`javascript
+```javascript
 GET     // Retrieve data (safe, idempotent)
 POST    // Create new resource
 PUT     // Update entire resource (idempotent)
@@ -64,10 +64,10 @@ PATCH   // Partial update
 DELETE  // Remove resource (idempotent)
 HEAD    // Get headers only
 OPTIONS // Get allowed methods
-\`\`\`
+```
 
 ### HTTP Status Codes:
-\`\`\`javascript
+```javascript
 // Success (2xx)
 200 OK                    // Successful GET, PUT, PATCH
 201 Created              // Successful POST
@@ -87,12 +87,12 @@ OPTIONS // Get allowed methods
 500 Internal Server Error // Generic server error
 502 Bad Gateway          // Upstream server error
 503 Service Unavailable  // Server overloaded
-\`\`\`
+```
 
 ## 📄 Request/Response Format
 
 ### Request Structure:
-\`\`\`javascript
+```javascript
 // Headers
 Content-Type: application/json
 Authorization: Bearer <token>
@@ -104,10 +104,10 @@ Accept: application/json
   "email": "john@example.com",
   "age": 30
 }
-\`\`\`
+```
 
 ### Response Structure:
-\`\`\`javascript
+```javascript
 // Success Response
 {
   "success": true,
@@ -148,14 +148,14 @@ Accept: application/json
     "requestId": "req_123456"
   }
 }
-\`\`\`
+```
 
 ## 📊 Pagination
 
 Handle large datasets efficiently with pagination.
 
 ### Offset-Based Pagination:
-\`\`\`javascript
+```javascript
 GET /api/users?page=2&limit=10
 
 // Response
@@ -171,10 +171,10 @@ GET /api/users?page=2&limit=10
     "hasPrev": true
   }
 }
-\`\`\`
+```
 
 ### Cursor-Based Pagination:
-\`\`\`javascript
+```javascript
 GET /api/users?cursor=eyJpZCI6MTIzfQ&limit=10
 
 // Response
@@ -188,12 +188,12 @@ GET /api/users?cursor=eyJpZCI6MTIzfQ&limit=10
     "hasPrev": true
   }
 }
-\`\`\`
+```
 
 ## 🔍 Filtering & Sorting
 
 ### Filtering:
-\`\`\`javascript
+```javascript
 GET /api/users?status=active&role=admin&age[gte]=18&age[lte]=65
 
 // Query operators
@@ -206,47 +206,47 @@ GET /api/users?status=active&role=admin&age[gte]=18&age[lte]=65
 [in]   // in array
 [nin]  // not in array
 [like] // contains (case-insensitive)
-\`\`\`
+```
 
 ### Sorting:
-\`\`\`javascript
+```javascript
 GET /api/users?sort=name,-createdAt
 
 // Multiple fields: name ascending, createdAt descending
 // + or no prefix = ascending
 // - prefix = descending
-\`\`\`
+```
 
 ### Field Selection:
-\`\`\`javascript
+```javascript
 GET /api/users?fields=id,name,email
 
 // Only return specified fields
-\`\`\`
+```
 
 ## 🔄 API Versioning
 
 ### URL Versioning:
-\`\`\`javascript
+```javascript
 GET /api/v1/users
 GET /api/v2/users
-\`\`\`
+```
 
 ### Header Versioning:
-\`\`\`javascript
+```javascript
 GET /api/users
 Accept: application/vnd.api+json;version=1
-\`\`\`
+```
 
 ### Query Parameter Versioning:
-\`\`\`javascript
+```javascript
 GET /api/users?version=1
-\`\`\`
+```
 
 ## 🔒 Security Best Practices
 
 ### Authentication & Authorization:
-\`\`\`javascript
+```javascript
 // JWT Token
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
@@ -255,30 +255,30 @@ X-API-Key: your-api-key-here
 
 // Basic Auth (HTTPS only)
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-\`\`\`
+```
 
 ### Input Validation:
-\`\`\`javascript
+```javascript
 // Validate all inputs
 const schema = {
   name: { type: 'string', minLength: 2, maxLength: 50 },
   email: { type: 'string', format: 'email' },
   age: { type: 'number', minimum: 0, maximum: 120 }
 };
-\`\`\`
+```
 
 ### Rate Limiting:
-\`\`\`javascript
+```javascript
 // Headers
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
 X-RateLimit-Reset: 1609459200
-\`\`\`
+```
 
 ## 📝 API Documentation
 
 ### OpenAPI/Swagger Example:
-\`\`\`yaml
+```yaml
 openapi: 3.0.0
 info:
   title: User API
@@ -307,12 +307,12 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/User'
-\`\`\`
+```
 
 ## 🧪 Testing APIs
 
 ### Unit Testing:
-\`\`\`javascript
+```javascript
 describe('GET /api/users', () => {
   it('should return all users', async () => {
     const response = await request(app)
@@ -323,10 +323,10 @@ describe('GET /api/users', () => {
     expect(Array.isArray(response.body.data)).toBe(true);
   });
 });
-\`\`\`
+```
 
 ### Integration Testing:
-\`\`\`javascript
+```javascript
 describe('User API Integration', () => {
   it('should create, read, update, and delete user', async () => {
     // Create
@@ -339,27 +339,27 @@ describe('User API Integration', () => {
     
     // Read
     await request(app)
-      .get(\`/api/users/\${userId}\`)
+      .get(`/api/users/${userId}`)
       .expect(200);
     
     // Update
     await request(app)
-      .put(\`/api/users/\${userId}\`)
+      .put(`/api/users/${userId}`)
       .send({ name: 'Updated User' })
       .expect(200);
     
     // Delete
     await request(app)
-      .delete(\`/api/users/\${userId}\`)
+      .delete(`/api/users/${userId}`)
       .expect(204);
   });
 });
-\`\`\`
+```
 
 ## 📈 Performance Optimization
 
 ### Caching:
-\`\`\`javascript
+```javascript
 // Cache-Control headers
 Cache-Control: public, max-age=3600
 ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
@@ -367,27 +367,27 @@ ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
 // Conditional requests
 If-None-Match: "33a64df551425fcc55e4d42a148795d9f25f89d4"
 If-Modified-Since: Wed, 21 Oct 2015 07:28:00 GMT
-\`\`\`
+```
 
 ### Compression:
-\`\`\`javascript
+```javascript
 // Enable gzip compression
 Accept-Encoding: gzip, deflate
 Content-Encoding: gzip
-\`\`\`
+```
 
 ### Database Optimization:
-\`\`\`javascript
+```javascript
 // Use database indexes
 // Implement query optimization
 // Use connection pooling
 // Implement read replicas
-\`\`\`
+```
 
 ## 🔧 Error Handling
 
 ### Consistent Error Format:
-\`\`\`javascript
+```javascript
 {
   "success": false,
   "error": {
@@ -399,10 +399,10 @@ Content-Encoding: gzip
     }
   }
 }
-\`\`\`
+```
 
 ### Error Categories:
-\`\`\`javascript
+```javascript
 // Validation Errors
 {
   "code": "VALIDATION_ERROR",
@@ -423,7 +423,7 @@ Content-Encoding: gzip
   "code": "DATABASE_CONNECTION_ERROR",
   "message": "Unable to connect to database"
 }
-\`\`\`
+```
 
 ## 📋 API Design Checklist
 
@@ -483,10 +483,10 @@ Check out the complete implementation with:
 - [ ] Build a booking system API with availability and reservations
 - [ ] Design a content management API with articles, categories, and tags
 - [ ] Implement a financial API with accounts, transactions, and reports
-\`\`\`
-\`\`\`
+```
+```
 
-\`\`\`
+```
 
 
-\`\`\`
+```
