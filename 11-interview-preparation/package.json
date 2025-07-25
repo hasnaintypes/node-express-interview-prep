@@ -1,0 +1,21 @@
+{
+  "name": "backend-interview-preparation",
+  "version": "1.0.0",
+  "description": "Comprehensive backend interview preparation guide with coding challenges",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "rate-limiter": "node coding-challenges/rate-limiter.js",
+    "ttl-cache": "node coding-challenges/ttl-cache.js",
+    "event-emitter": "node coding-challenges/event-emitter.js",
+    "all-challenges": "npm run rate-limiter && npm run ttl-cache && npm run event-emitter"
+  },
+  "keywords": ["interview", "backend", "nodejs", "javascript", "coding-challenges", "system-design", "preparation"],
+  "author": "Backend Learning Path",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
