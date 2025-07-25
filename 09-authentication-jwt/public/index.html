@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT Authentication Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .response {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      .error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+      .success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+      }
+      .token-display {
+        background-color: #e9ecef;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        word-break: break-all;
+        font-family: monospace;
+        font-size: 12px;
+      }
+      .user-info {
+        background-color: #e7f3ff;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>JWT Authentication Test Interface</h1>
+
+    <div class="container">
+      <h2>Current Status</h2>
+      <div id="current-status">
+        <p>Status: <span id="auth-status">Not authenticated</span></p>
+        <div id="current-user" style="display: none"></div>
+        <div id="current-token" style="display: none"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Register</h2>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="register-name">Name:</label>
+          <input type="text" id="register-name" required />
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email:</label>
+          <input type="email" id="register-email" required />
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password:</label>
+          <input type="password" id="register-password" required />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <div id="register-response" class="response" style="display: none"></div>
+    </div>
+
+    <div class="container">
+      <h2>Login</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email:</label>
+          <input type="email" id="login-email" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <div id="login-response" class="response" style="display: none"></div>
+    </div>
+
+    <div class="container">
+      <h2>Protected Actions</h2>
+      <button onclick="testProtectedRoute()">Test Protected Route</button>
+      <button onclick="testAdminRoute()">Test Admin Route</button>
+      <button onclick="getUserProfile()">Get User Profile</button>
+      <button onclick="getAllUsers()">Get All Users</button>
+      <button onclick="logout()">Logout</button>
+      <div id="protected-response" class="response" style="display: none"></div>
+    </div>
+
+    <div class="container">
+      <h2>Password Management</h2>
+      <form id="forgot-password-form">
+        <div class="form-group">
+          <label for="forgot-email">Email:</label>
+          <input type="email" id="forgot-email" required />
+        </div>
+        <button type="submit">Request Password Reset</button>
+      </form>
+      <div id="forgot-response" class="response" style="display: none"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:3000/api";
+      let currentToken = null;
+      let currentUser = null;
+
+      // Utility functions
+      function showResponse(elementId, data, isError = false) {
+        const element = document.getElementById(elementId);
+        element.textContent = JSON.stringify(data, null, 2);
+        element.style.display = "block";
+        element.className = isError ? "response error" : "response success";
+      }
+
+      function updateStatus() {
+        const statusElement = document.getElementById("auth-status");
+        const userElement = document.getElementById("current-user");
+        const tokenElement = document.getElementById("current-token");
+
+        if (currentToken && currentUser) {
+          statusElement.textContent = "Authenticated";
+          statusElement.style.color = "green";
+          userElement.innerHTML = `
+                    <div class="user-info">
+                        <strong>User:</strong> ${currentUser.name} (${currentUser.email})<br>
+                        <strong>Role:</strong> ${currentUser.role}
+                    </div>
+                `;
+          tokenElement.innerHTML = `
+                    <div class="token-display">
+                        <strong>Token:</strong> ${currentToken.substring(
+                          0,
+                          50
+                        )}...
+                    </div>
+                `;
+          userElement.style.display = "block";
+          tokenElement.style.display = "block";
+        } else {
+          statusElement.textContent = "Not authenticated";
+          statusElement.style.color = "red";
+          userElement.style.display = "none";
+          tokenElement.style.display = "none";
+        }
+      }
+
+      async function makeRequest(url, options = {}) {
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers: {
+              "Content-Type": "application/json",
+              ...(currentToken && { Authorization: `Bearer ${currentToken}` }),
+              ...options.headers,
+            },
+          });
+
+          const data = await response.json();
+          return { data, status: response.status };
+        } catch (error) {
+          return { error: error.message, status: 0 };
+        }
+      }
+
+      // Authentication functions
+      document
+        .getElementById("register-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const userData = {
+            name:
+              formData.get("name") ||
+              document.getElementById("register-name").value,
+            email:
+              formData.get("email") ||
+              document.getElementById("register-email").value,
+            password:
+              formData.get("password") ||
+              document.getElementById("register-password").value,
+          };
+
+          const { data, error, status } = await makeRequest(
+            `${API_BASE}/auth/register`,
+            {
+              method: "POST",
+              body: JSON.stringify(userData),
+            }
+          );
+
+          if (error) {
+            showResponse("register-response", { error }, true);
+          } else {
+            showResponse("register-response", data, status !== 201);
+            if (data.success) {
+              currentToken = data.data.accessToken;
+              currentUser = data.data.user;
+              updateStatus();
+            }
+          }
+        });
+
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const loginData = {
+            email:
+              formData.get("email") ||
+              document.getElementById("login-email").value,
+            password:
+              formData.get("password") ||
+              document.getElementById("login-password").value,
+          };
+
+          const { data, error, status } = await makeRequest(
+            `${API_BASE}/auth/login`,
+            {
+              method: "POST",
+              body: JSON.stringify(loginData),
+            }
+          );
+
+          if (error) {
+            showResponse("login-response", { error }, true);
+          } else {
+            showResponse("login-response", data, status !== 200);
+            if (data.success) {
+              currentToken = data.data.accessToken;
+              currentUser = data.data.user;
+              updateStatus();
+            }
+          }
+        });
+
+      async function testProtectedRoute() {
+        const { data, error, status } = await makeRequest(
+          `${API_BASE}/protected/private`
+        );
+        if (error) {
+          showResponse("protected-response", { error }, true);
+        } else {
+          showResponse("protected-response", data, status !== 200);
+        }
+      }
+
+      async function testAdminRoute() {
+        const { data, error, status } = await makeRequest(
+          `${API_BASE}/protected/admin`
+        );
+        if (error) {
+          showResponse("protected-response", { error }, true);
+        } else {
+          showResponse("protected-response", data, status !== 200);
+        }
+      }
+
+      async function getUserProfile() {
+        const { data, error, status } = await makeRequest(
+          `${API_BASE}/users/me`
+        );
+        if (error) {
+          showResponse("protected-response", { error }, true);
+        } else {
+          showResponse("protected-response", data, status !== 200);
+        }
+      }
+
+      async function getAllUsers() {
+        const { data, error, status } = await makeRequest(`${API_BASE}/users`);
+        if (error) {
+          showResponse("protected-response", { error }, true);
+        } else {
+          showResponse("protected-response", data, status !== 200);
+        }
+      }
+
+      async function logout() {
+        currentToken = null;
+        currentUser = null;
+        updateStatus();
+        showResponse("protected-response", {
+          message: "Logged out successfully",
+        });
+      }
+
+      document
+        .getElementById("forgot-password-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const email =
+            formData.get("email") ||
+            document.getElementById("forgot-email").value;
+
+          const { data, error, status } = await makeRequest(
+            `${API_BASE}/auth/forgot-password`,
+            {
+              method: "POST",
+              body: JSON.stringify({ email }),
+            }
+          );
+
+          if (error) {
+            showResponse("forgot-response", { error }, true);
+          } else {
+            showResponse("forgot-response", data, status !== 200);
+          }
+        });
+
+      // Initialize
+      updateStatus();
+    </script>
+  </body>
+</html>
